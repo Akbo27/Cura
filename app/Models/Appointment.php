@@ -11,10 +11,14 @@ class Appointment extends Model
     use HasFactory;
 
     //Model Relations
-
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function doctor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id');
     }
 
     protected $fillable = [

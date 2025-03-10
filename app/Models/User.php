@@ -15,7 +15,7 @@ class User extends Authenticatable
 
     //Model Relations ------------------
 
-    public function appointments()
+    public function appointments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Appointment::class,'appointment_id');
     }

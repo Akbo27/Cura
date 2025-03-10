@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\HospitalController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 })->name('home');
 
 Route::view('dashboard', 'dashboard')
@@ -14,9 +16,9 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
-    Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
-    Volt::route('settings/password', 'settings.password')->name('settings.password');
-    Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+    Route::resource('appointments', AppointmentController::class);
+    Route::resource('doctors', DoctorController::class);
+    Route::resource('hospitals', HospitalController::class);
 });
 
 require __DIR__.'/auth.php';

@@ -11,10 +11,16 @@ class Hospital extends Model
 
     use HasFactory;
 
-    public function doctors(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function doctors()
     {
-        return $this->hasMany(doctor::class,'doctor_id');
+        return $this->hasMany(Doctor::class);
     }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
     protected $fillable = [
         'name',
         'address',

@@ -17,6 +17,8 @@ Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::resource('appointments', AppointmentController::class);
+    Route::get('/get-doctors', [AppointmentController::class, 'getDoctors']);
+
     Route::resource('doctors', DoctorController::class);
     Route::resource('hospitals', HospitalController::class);
 });

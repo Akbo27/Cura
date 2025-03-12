@@ -2,6 +2,7 @@
     @section('title', 'Welcome')
 
     @section('content')
+
         <div class="text-center">
             <h1 class="text-8xl font-bold">Welcome to your path to wellness! </h1>
             <p class="mt-2">Experience personalized and secure healthcare in Bangkok with CURA</p>

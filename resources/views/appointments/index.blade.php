@@ -23,9 +23,31 @@
                 <tr>
                     <!-- Doctor's Name: Check if user exists -->
                     <td class="border p-2">
-                        {{ $appointment->doctor->user ? $appointment->doctor->user->name : 'Unknown Doctor' }}
+                        {{ $appointment->doctor && $appointment->doctor->user ? $appointment->doctor->user->name : 'Unknown Doctor' }}
                     </td>
 
                     <!-- Hospital's Name: Check if hospital exists -->
                     <td class="border p-2">
-{{ $appointment->doctor->hospital ? $appointment->doctor->
+                        {{ $appointment->doctor && $appointment->doctor->hospital ? $appointment->doctor->hospital->name : 'Unknown Hospital' }}
+                    </td>
+
+                    <!-- Appointment Date -->
+                    <td class="border p-2">
+                        {{ $appointment->appointment_date ?? 'Not Set' }}
+                    </td>
+
+                    <!-- Appointment Time -->
+                    <td class="border p-2">
+                        {{ $appointment->appointment_time ?? 'Not Set' }}
+                    </td>
+
+                    <!-- Appointment Status -->
+                    <td class="border p-2">
+                        {{ ucfirst($appointment->status ?? 'pending') }}
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    @endsection
+</x-site-layout>

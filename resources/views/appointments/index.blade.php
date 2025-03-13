@@ -1,6 +1,7 @@
 <x-site-layout>
 
-        <h2 class="text-2xl font-bold">My Appointments</h2>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">My Appointments</h1>
 
         @if(session('success'))
             <div class="bg-green-500 text-white p-3 rounded mt-2">{{ session('success') }}</div>

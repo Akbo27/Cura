@@ -16,9 +16,22 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
-    Route::resource('appointments', AppointmentController::class);
-    Route::get('/get-doctors', [AppointmentController::class, 'getDoctors']);
+    // **Step 1: Choose specialization**
+    Route::get('/appointments/specializations', [AppointmentController::class, 'selectSpecialization'])
+        ->name('appointments.specializations');
 
+    // **Step 2: Choose doctor, date & time**
+    Route::get('/appointments/chooseDoctor', [AppointmentController::class, 'showDoctorSelection'])
+        ->name('appointments.chooseDoctor');
+
+    // **Store appointment**
+    Route::post('/appointments/store', [AppointmentController::class, 'store'])
+        ->name('appointments.store');
+
+    // **Resource routes for appointments (except create and store)**
+    Route::resource('appointments', AppointmentController::class)->except(['create', 'store']);
+
+    // **Doctors & Hospitals**
     Route::resource('doctors', DoctorController::class);
     Route::resource('hospitals', HospitalController::class);
 });

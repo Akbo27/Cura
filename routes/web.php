@@ -21,10 +21,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('appointments.specializations');
 
     // **Step 2: Choose doctor, date & time**
-    Route::get('/appointments/chooseDoctor', [AppointmentController::class, 'showDoctorSelection'])
-        ->name('appointments.chooseDoctor');
+    Route::get('/appointments/book', [AppointmentController::class, 'showDoctorSelection'])
+        ->name('appointments.book');
 
-    // **Store appointment**
     Route::post('/appointments/store', [AppointmentController::class, 'store'])
         ->name('appointments.store');
 

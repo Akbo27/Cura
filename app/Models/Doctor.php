@@ -19,6 +19,11 @@ class Doctor extends Model
         return $this->hasMany(Appointment::class,);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     protected $fillable = [
         'name',
         'specialization',

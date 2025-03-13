@@ -9,13 +9,12 @@ use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-    // Apply auth middleware to ensure only logged-in users access these methods
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    // Step 1: Show the specialization selection form
+    // Step 1: Show available specializations
     public function selectSpecialization()
     {
         // Fetch distinct specializations
@@ -23,22 +22,42 @@ class AppointmentController extends Controller
         return view('appointments.specializations', compact('specializations'));
     }
 
-    // Step 2: Show doctors and the appointment form based on selected specialization
-    public function showDoctorSelection(Request $request)
+    // Step 2: Show hospitals offering the selected specialization
+    public function showHospitals($specialization)
     {
-        // Get the specialization from the request
-        $specialization = $request->input('specialization');
-        // Fetch doctors based on the selected specialization
-        $doctors = Doctor::where('specialization', $specialization)->get();
+        // Fetch hospitals that have doctors with the selected specialization
+        $hospitals = Hospital::whereHas('doctors', function ($query) use ($specialization) {
+            $query->where('specialization', $specialization);
+        })->get();
 
-        // Pass the data to the book view
+        return view('appointments.hospitals', compact('hospitals', 'specialization'));
+    }
+
+    public function showDoctorSelection(Request $request, $hospital_id)
+    {
+        if (!$hospital_id) {
+            return redirect()->route('appointments.specializations')->with('error', 'Hospital ID is missing');
+        }
+
+        // Ensure specialization and hospital_id are retrieved
+        $specialization = $request->input('specialization');
+        $hospital = Hospital::findOrFail($hospital_id); // Get hospital by ID
+
+        // Fetch doctors that belong to the selected hospital and have the selected specialization
+        $doctors = Doctor::where('specialization', $specialization)
+            ->where('hospital_id', $hospital->id)
+            ->get();
+
+        // Pass specialization, hospital, and doctors to the view
         return view('appointments.book', [
             'doctors' => $doctors,
-            'specialization' => $specialization
+            'specialization' => $specialization,
+            'hospital' => $hospital,
+            'hospital_id' => $hospital_id,
         ]);
     }
 
-    // Step 3: Confirm and store the appointment
+    // Step 4: Confirm and store the appointment
     public function store(Request $request)
     {
         $request->validate([

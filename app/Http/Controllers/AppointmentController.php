@@ -15,29 +15,39 @@ class AppointmentController extends Controller
         $this->middleware('auth');
     }
 
-    // Show appointment booking form
-    public function create()
+    // Step 1: Show the specialization selection form
+    public function selectSpecialization()
     {
-        return view('appointments.create', [
-            'hospitals' => Hospital::all(),
-            'specializations' => Doctor::select('specialization')->distinct()->pluck('specialization'),
+        $specializations = Doctor::select('specialization')->distinct()->pluck('specialization');
+        return view('appointments.specializations', compact('specializations'));
+    }
+
+    // Step 2: Show doctors and the appointment form based on selected specialization
+    public function showDoctorSelection(Request $request)
+    {
+        $specialization = $request->input('specialization');
+        $doctors = Doctor::where('specialization', $specialization)->get();
+
+        return view('appointments.book', [
+            'doctors' => $doctors,
+            'specialization' => $specialization
         ]);
     }
 
-    // Store the new appointment in the database
+    // Step 3: Confirm and store the appointment
     public function store(Request $request)
     {
         $request->validate([
-            'hospital_id' => 'required|exists:hospitals,id',
             'doctor_id' => 'required|exists:doctors,id',
             'appointment_date' => 'required|date|after_or_equal:today',
             'appointment_time' => 'required|in:09:00,10:00,13:00,15:00,18:00',
         ]);
 
+        // Create the appointment in the database
         Appointment::create([
             'user_id' => auth()->id(),
             'doctor_id' => $request->doctor_id,
-            'hospital_id' => $request->hospital_id,
+            'hospital_id' => $request->hospital_id, // Optional if you have hospitals
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
             'status' => 'scheduled',
@@ -52,67 +62,6 @@ class AppointmentController extends Controller
         return view('appointments.index', [
             'appointments' => Appointment::where('user_id', auth()->id())->with('doctor.user', 'doctor.hospital')->get(),
         ]);
-    }
-
-    // Show details of a single appointment
-    public function show(Appointment $appointment)
-    {
-        if ($appointment->user_id !== auth()->id()) {
-            abort(403); // Prevent unauthorized access
-        }
-
-        return view('appointments.show', compact('appointment'));
-    }
-
-    // Edit appointment details
-    public function edit(Appointment $appointment)
-    {
-        if ($appointment->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        return view('appointments.edit', [
-            'appointment' => $appointment,
-            'hospitals' => Hospital::all(),
-            'doctors' => Doctor::all(),
-        ]);
-    }
-
-    // Update appointment details
-    public function update(Request $request, Appointment $appointment)
-    {
-        if ($appointment->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        $request->validate([
-            'hospital_id' => 'required|exists:hospitals,id',
-            'doctor_id' => 'required|exists:doctors,id',
-            'appointment_date' => 'required|date|after_or_equal:today',
-            'appointment_time' => 'required|in:09:00,10:00,13:00,15:00,18:00',
-        ]);
-
-        $appointment->update([
-            'doctor_id' => $request->doctor_id,
-            'hospital_id' => $request->hospital_id,
-            'appointment_date' => $request->appointment_date,
-            'appointment_time' => $request->appointment_time,
-            'status' => 'scheduled',
-        ]);
-
-        return redirect()->route('appointments.index')->with('success', 'Appointment updated successfully!');
-    }
-
-    // Delete an appointment
-    public function destroy(Appointment $appointment)
-    {
-        if ($appointment->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        $appointment->delete();
-
-        return redirect()->route('appointments.index')->with('success', 'Appointment canceled successfully!');
     }
 
     // Fetch doctors dynamically based on specialization (AJAX)

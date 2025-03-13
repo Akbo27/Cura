@@ -2,26 +2,27 @@
     <div class="container mt-5">
         <h1 class="text-center mb-4">Hospitals for {{ $specialization }}</h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="row">
             @foreach($hospitals as $hospital)
-                <div class="border p-4 shadow rounded-lg">
-                    <h2 class="text-lg font-bold">{{ $hospital->name }}</h2>
-                    <p class="text-gray-700">{{ $hospital->location }}</p>
-                    <!-- Make sure you pass both hospital_id and specialization here -->
-                    <a href="{{ route('appointments.book', ['hospital_id' => $hospital->id, 'specialization' => $specialization]) }}" class="mt-2 inline-block bg-blue-600 text-white px-4 py-2 rounded">
-                        Choose This Hospital
-                    </a>
+                <div class="col-md-4 mb-4"> <!-- Added mb-4 for spacing -->
+                    <div class="card h-100">
+                        <div class="row g-0 h-100">
+                            <div class="col-md-4">
+                                <img src="{{ asset('images/' .'hospital.jpg') }}" class="img-fluid h-100 w-100 rounded-start" style="object-fit: cover;" alt="{{ $hospital->name }}">
+                            </div>
+                            <div class="col-md-8 d-flex align-items-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $hospital->name }}</h5>
+                                    <p class="card-text text-muted">{{ $hospital->location }}</p>
+                                    <a href="{{ route('appointments.book', ['hospital_id' => $hospital->id, 'specialization' => $specialization]) }}" class="btn btn-primary">
+                                        View More
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>
     </div>
 </x-site-layout>
-
-
-
-
-
-
-
-
-

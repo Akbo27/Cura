@@ -9,19 +9,15 @@
 
 </head>
 <body class="bg-gray-100">
-<!-- Page container with flex column layout to push footer to the bottom -->
 <div class="min-h-screen flex flex-col">
-    <!-- Header -->
     <x-site-layout-header />
 
-    <!-- Main content area with padding and space for the content -->
     <div class="flex-1 px-4 sm:px-8 py-8">
         <div class="container mx-auto">
-            {{ $slot }} <!-- This is where content injected by the pages will go -->
+            {{ $slot }}
         </div>
     </div>
 
-    <!-- Footer -->
     <x-site-layout-footer />
 </div>
 </body>

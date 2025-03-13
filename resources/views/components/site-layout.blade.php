@@ -13,10 +13,8 @@
 <div class="min-h-screen flex flex-col">
     <x-site-layout-header />
 
-    <div class="flex-1 px-4 sm:px-8 py-8">
-        <div class="container mx-auto">
-            {{ $slot }}
-        </div>
+    <div class="flex-1">
+        {{ $slot }}
     </div>
 
     <x-site-layout-footer />

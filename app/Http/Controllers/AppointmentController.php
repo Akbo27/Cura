@@ -18,6 +18,7 @@ class AppointmentController extends Controller
     // Step 1: Show the specialization selection form
     public function selectSpecialization()
     {
+        // Fetch distinct specializations
         $specializations = Doctor::select('specialization')->distinct()->pluck('specialization');
         return view('appointments.specializations', compact('specializations'));
     }
@@ -25,9 +26,12 @@ class AppointmentController extends Controller
     // Step 2: Show doctors and the appointment form based on selected specialization
     public function showDoctorSelection(Request $request)
     {
+        // Get the specialization from the request
         $specialization = $request->input('specialization');
+        // Fetch doctors based on the selected specialization
         $doctors = Doctor::where('specialization', $specialization)->get();
 
+        // Pass the data to the book view
         return view('appointments.book', [
             'doctors' => $doctors,
             'specialization' => $specialization
@@ -38,16 +42,23 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'doctor_id' => 'required|exists:doctors,id',
-            'appointment_date' => 'required|date|after_or_equal:today',
+            'doctor' => 'required|exists:doctors,id',
+            'appointment_date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $year = (int) date('Y', strtotime($value));
+                    if ($year < 2024) {
+                        $fail('The appointment year must be 2024 or later.');
+                    }
+                },
+            ],
             'appointment_time' => 'required|in:09:00,10:00,13:00,15:00,18:00',
         ]);
 
-        // Create the appointment in the database
         Appointment::create([
             'user_id' => auth()->id(),
-            'doctor_id' => $request->doctor_id,
-            'hospital_id' => $request->hospital_id, // Optional if you have hospitals
+            'doctor_id' => $request->doctor,
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
             'status' => 'scheduled',
@@ -59,14 +70,17 @@ class AppointmentController extends Controller
     // Show list of user's appointments
     public function index()
     {
-        return view('appointments.index', [
-            'appointments' => Appointment::where('user_id', auth()->id())->with('doctor.user', 'doctor.hospital')->get(),
-        ]);
+        $appointments = Appointment::where('user_id', auth()->id())
+            ->with('doctor.hospital') // Ensure relationships are loaded
+            ->get();
+
+        return view('appointments.index', compact('appointments'));
     }
 
-    // Fetch doctors dynamically based on specialization (AJAX)
+    // Fetch doctors dynamically based on specialization (AJAX - not used in this case)
     public function getDoctors(Request $request)
     {
+        // Fetch doctors based on specialization from the request
         $doctors = Doctor::where('specialization', $request->specialization)->with('user')->get();
         return response()->json($doctors);
     }

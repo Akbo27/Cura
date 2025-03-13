@@ -4,27 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Hospital Booking System')</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 <body class="bg-gray-100">
-<nav class="bg-blue-500 text-white p-4">
-    <div class="container mx-auto flex justify-between">
-        <a href="{{ route('home') }}" class="text-lg font-bold">Cura</a>
-        <div>
-            @auth
-                <a href="{{ route('appointments.index') }}" class="mr-4">My Appointments</a>
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="text-white">Logout</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}">Login</a>
-            @endauth
+<!-- Page container with flex column layout to push footer to the bottom -->
+<div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <x-site-layout-header />
+
+    <!-- Main content area with padding and space for the content -->
+    <div class="flex-1 px-4 sm:px-8 py-8">
+        <div class="container mx-auto">
+            {{ $slot }} <!-- This is where content injected by the pages will go -->
         </div>
     </div>
-</nav>
-<div class="container mx-auto mt-8">
-    @yield('content')
+
+    <!-- Footer -->
+    <x-site-layout-footer />
 </div>
 </body>
 </html>

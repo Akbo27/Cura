@@ -12,11 +12,11 @@ class AdminController extends Controller
         $this->middleware('isAdmin');
     }
 
-    // Display the appointments for the admin
+    // Display appointments for the admin
     public function index()
     {
-        $appointments = Appointment::with('doctor', 'user', 'hospital')->get();
-        return view('admin.appointments.index', compact('appointments'));
+        $appointments = Appointment::all();
+        return view('admin.dashboard', compact('appointments'));
     }
 
     private function middleware(string $string)

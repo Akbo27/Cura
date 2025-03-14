@@ -8,23 +8,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IsAdmin
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
-        $hasAuth = auth()->check();
-        if(!$hasAuth) {
-            abort(401);
+        // Dump the authenticated user to see their properties
+
+        if (!auth()->check()) {
+            return redirect()->route('login');
         }
 
-        $isAdmin = auth()->user()->is_admin;
-        if($isAdmin) {
-            return $next($request);
+        if (auth()->user()->is_admin !== true) {
+            abort(403, 'You do not have permission to access this page.');
         }
 
-        return redirect()->route('admin.appointments.index');
+        return $next($request);
     }
 }

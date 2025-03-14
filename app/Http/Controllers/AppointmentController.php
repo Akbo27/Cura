@@ -104,6 +104,25 @@ class AppointmentController extends Controller
         return response()->json($doctors);
     }
 
+    public function update($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->status = 'Approved';  // Update status to Approved
+        $appointment->save();
+
+        return redirect()->route('admin.dashboard')->with('success', 'Appointment has been approved!');
+    }
+
+    public function cancel($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->status = 'Canceled';  // Update status to Canceled
+        $appointment->save();
+
+        return redirect()->route('admin.dashboard')->with('success', 'Appointment has been canceled!');
+    }
+
+
     private function middleware(string $string)
     {
     }

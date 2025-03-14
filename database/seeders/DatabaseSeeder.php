@@ -17,6 +17,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::create([
+            'name' => 'Bobo',
+            'email' => 'bobo.admin@gmail.com',
+            'password' => '$2y$12$5x1EFgPdw6HuuqTdcARqYuApneUizEo4PtaW9uhzTNUC.1VSbuyeW',
+            'is_admin' => true,
+        ]);
 
         Hospital::factory(30)->create();
         User::factory(10)->create();

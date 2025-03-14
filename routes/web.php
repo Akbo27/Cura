@@ -10,9 +10,11 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::get('dashboard', function () {
+    return view('admin.appointments.index');
+})
+    ->middleware(['auth', 'verified', 'isAdmin'])
+    ->name('admin.dashboard');
 
 // **Step 1: Choose Specialization (Available for everyone)**
 Route::get('/appointments/specializations', [AppointmentController::class, 'selectSpecialization'])
